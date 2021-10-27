@@ -10,7 +10,7 @@ class AppStyles {
       letterSpacing: 0.7);
   static TextStyle fillStyle = hintStyle.copyWith(color: Colors.black);
   static TextStyle textTitle = TextStyle(
-      fontSize: 35, color: Colors.blue.shade700, fontWeight: FontWeight.w700);
+      fontSize: 40, color: Colors.blue.shade700, fontWeight: FontWeight.w700);
   static TextStyle textButton = TextStyle(
     fontSize: 20,
     fontWeight: FontWeight.w700,

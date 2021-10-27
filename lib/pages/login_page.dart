@@ -119,13 +119,38 @@ class _LoginPageState extends State<LoginPage> {
           ),
           !isProcessing
               ? Container()
-              : Container(
-                  height: size.height,
-                  width: size.width,
-                  color: Colors.grey.withOpacity(0.3),
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
+              : Stack(
+                  children: [
+                    Container(
+                      height: size.height,
+                      width: size.width,
+                      color: Colors.grey.withOpacity(0.4),
+                    ),
+                    Positioned(
+                      top: size.height / 2 - size.width / 4.4,
+                      left: size.width / 2 - size.width / 3,
+                      child: Container(
+                        height: size.width / 2.2,
+                        width: size.width / 1.5,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.4),
+                              spreadRadius: 3,
+                              blurRadius: 7,
+                              offset:
+                                  Offset(1, 1), // changes position of shadow
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
         ],
       ),

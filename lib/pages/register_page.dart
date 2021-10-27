@@ -1,7 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_chat/models/user_model.dart';
+import 'package:flutter_app_chat/pages/login_page.dart';
 import 'package:flutter_app_chat/services/auth_services.dart';
+import 'package:flutter_app_chat/services/database.dart';
 import 'package:flutter_app_chat/shared_widgets/custom_button.dart';
 import 'package:flutter_app_chat/shared_widgets/input_text.dart';
 import 'package:flutter_app_chat/shared_widgets/title_text.dart';
@@ -18,6 +20,8 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final _nameController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPwController = TextEditingController();
@@ -28,7 +32,6 @@ class _RegisterPageState extends State<RegisterPage> {
   late bool visible;
   late String icPath;
 
-  AuthServices authMethods = new AuthServices();
   @override
   void initState() {
     super.initState();
@@ -42,6 +45,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       resizeToAvoidBottomInset: false,
+
       // appBar: AppBar(
       //   centerTitle: true,
       //   leading: Padding(
@@ -55,6 +59,7 @@ class _RegisterPageState extends State<RegisterPage> {
       body: Stack(
         children: [
           Column(
+            //mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
@@ -85,13 +90,20 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                       ),
                     ),
-                    Padding(
+                    Container(
                       padding: EdgeInsets.fromLTRB(27, 47, 27, 0),
                       child: Form(
                         key: globalKey,
                         child: Column(
+                          mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            Padding(
+                                padding: const EdgeInsets.only(bottom: 20),
+                                child: _input('Name', _nameController)),
+                            Padding(
+                                padding: const EdgeInsets.only(bottom: 20),
+                                child: _input('Phone', _phoneController)),
                             Padding(
                               padding: const EdgeInsets.only(bottom: 20),
                               child: InputText(
@@ -144,13 +156,38 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
           !isProcessing
               ? Container()
-              : Container(
-                  height: size.height,
-                  width: size.width,
-                  color: Colors.grey.withOpacity(0.3),
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
+              : Stack(
+                  children: [
+                    Container(
+                      height: size.height,
+                      width: size.width,
+                      color: Colors.grey.withOpacity(0.4),
+                    ),
+                    Positioned(
+                      top: size.height / 2 - size.width / 4.4,
+                      left: size.width / 2 - size.width / 3,
+                      child: Container(
+                        height: size.width / 2.2,
+                        width: size.width / 1.5,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.4),
+                              spreadRadius: 3,
+                              blurRadius: 7,
+                              offset:
+                                  Offset(1, 1), // changes position of shadow
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
         ],
       ),
@@ -159,7 +196,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Widget confirmPw(String hint) {
     return TextFormField(
-      textInputAction: TextInputAction.next,
+      textInputAction: TextInputAction.done,
       validator: (input) => input != _passwordController.text
           ? 'Confirmed password not match'
           : null,
@@ -192,6 +229,28 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
+  Widget _input(String hint, TextEditingController controller) {
+    return TextFormField(
+      textInputAction: TextInputAction.done,
+      validator: (input) => input == null ? 'Fill your $hint' : null,
+      controller: controller,
+      keyboardType: hint == 'Phone' ? TextInputType.number : TextInputType.text,
+      style: AppStyles.fillStyle,
+      decoration: InputDecoration(
+        contentPadding: const EdgeInsets.fromLTRB(20, 16, 0, 8),
+        labelText: hint,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(15)),
+          borderSide: BorderSide(color: AppColors.primary, width: 1.0),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(15)),
+          borderSide: BorderSide(color: AppColors.primary, width: 1.0),
+        ),
+      ),
+    );
+  }
+
   void controlVisible() {
     setState(() {
       if (visible) {
@@ -204,7 +263,8 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   void login() {
-    back();
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (_) => LoginPage()));
   }
 
   void register() {
@@ -212,12 +272,32 @@ class _RegisterPageState extends State<RegisterPage> {
       setState(() {
         isProcessing = true;
       });
+      AuthServices authMethods = new AuthServices();
       authMethods
           .signUpWithEmailAndPassword(
               _emailController.text, _passwordController.text)
           .then((value) {
         print(value.runtimeType);
         if (value is UserModel) {
+          DatabaseServices databaseServices = new DatabaseServices();
+          UserInfor newUser = new UserInfor(
+              email: _emailController.text,
+              name: _nameController.text,
+              avatar: '',
+              phone: _phoneController.text);
+          databaseServices.addUser(newUser.toMap());
+          ///////////////////////////
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Register successful'),
+          ));
+
+          //////////////////////////
+          Future.delayed(Duration(seconds: 2), () {
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (_) => LoginPage()),
+                (route) => false);
+          });
         } else {
           String e = value.toString();
           String error = e.substring(e.indexOf(']') + 1);

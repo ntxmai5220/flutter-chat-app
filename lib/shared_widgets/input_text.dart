@@ -33,7 +33,7 @@ class _InputTextState extends State<InputText> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      textInputAction: TextInputAction.next,
+      textInputAction: TextInputAction.done,
       validator: valid,
       controller: widget.textController,
       keyboardType: TextInputType.emailAddress,
@@ -60,12 +60,10 @@ class _InputTextState extends State<InputText> {
           labelText: widget.label,
           border: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(15)),
-              borderSide: BorderSide(
-                  color: Colors.blue.shade600.withOpacity(0.5), width: 1.0)),
+              borderSide: BorderSide(color: AppColors.primary, width: 1.0)),
           enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(15)),
-              borderSide: BorderSide(
-                  color: Colors.blue.shade600.withOpacity(0.5), width: 1.0))),
+              borderSide: BorderSide(color: AppColors.primary, width: 1.0))),
     );
   }
 

@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_app_chat/models/user_model.dart';
 
@@ -32,5 +30,9 @@ class AuthServices {
       print(e.toString());
       return e;
     }
+  }
+
+  Future signOut() async {
+    await _firebaseAuth.signOut();
   }
 }
