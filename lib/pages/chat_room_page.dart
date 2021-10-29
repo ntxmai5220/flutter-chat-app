@@ -31,7 +31,9 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     super.initState();
     //print('init');
     setState(() {
-      this.docId = widget.me.email + '_' + widget.friend.email;
+      this.docId = widget.docID == '_._'
+          ? widget.me.email + '_' + widget.friend.email
+          : widget.docID;
     });
   }
 
