@@ -160,8 +160,16 @@ class _ProfilePageState extends State<ProfilePage> {
                 ? Icons.phone
                 : (label == 'Name' ? Icons.child_care : Icons.email),
             color: enable ? AppColors.primary : AppColors.grey_text),
-        border: InputBorder.none,
-        enabledBorder: InputBorder.none,
+        border: !enable
+            ? InputBorder.none
+            : UnderlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(15)),
+                borderSide: BorderSide(color: AppColors.primary, width: 1.0)),
+        enabledBorder: !enable
+            ? InputBorder.none
+            : UnderlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(15)),
+                borderSide: BorderSide(color: AppColors.primary, width: 1.0)),
       ),
     );
   }
@@ -218,23 +226,26 @@ class _ProfilePageState extends State<ProfilePage> {
     return Positioned(
       right: 3,
       bottom: 53,
-      width: 35,
-      height: 35,
+      height: 32,
       child: InkWell(
         onHover: (onHover) {},
         onTap: _editInfo,
-        borderRadius: BorderRadius.circular(20),
-        child: CircleAvatar(
-          backgroundColor: Colors.transparent,
-          child: Icon(
-            Icons.edit,
-            color: Colors.black,
-          ),
+        borderRadius: BorderRadius.circular(15),
+        child: Row(
+          children: [
+            CircleAvatar(
+              backgroundColor: Colors.transparent,
+              child: Icon(
+                Icons.edit,
+                color: Colors.black,
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(right: 10),
+              child: Text('Edit'),
+            ),
+          ],
         ),
-        // Container(
-        //   margin: EdgeInsets.only(left: 12),
-        //   child: Text('Edit'),
-        // ),
       ),
     );
   }
@@ -250,7 +261,7 @@ class _ProfilePageState extends State<ProfilePage> {
         borderRadius: BorderRadius.circular(50),
         child: CircleAvatar(
           child: Icon(
-            Icons.people,
+            Icons.face,
             size: 50,
           ),
         ),

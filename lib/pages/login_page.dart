@@ -72,14 +72,14 @@ class _LoginPageState extends State<LoginPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Padding(
-                              padding: const EdgeInsets.only(bottom: 20),
+                              padding: const EdgeInsets.only(bottom: 25),
                               child: InputText(
                                 label: 'Email',
                                 textController: _emailController,
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(bottom: 20),
+                              padding: const EdgeInsets.only(bottom: 25),
                               child: InputText(
                                 label: 'Password',
                                 textController: _passwordController,

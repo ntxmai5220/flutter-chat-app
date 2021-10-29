@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app_chat/models/user_model.dart';
 import 'package:flutter_app_chat/pages/login_page.dart';
 import 'package:flutter_app_chat/pages/register_page.dart';
+import 'package:flutter_app_chat/pages/search_result_page.dart';
 
 import 'pages/home_page.dart';
 import 'pages/profile_page.dart';

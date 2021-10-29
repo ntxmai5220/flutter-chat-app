@@ -99,13 +99,13 @@ class _RegisterPageState extends State<RegisterPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Padding(
-                                padding: const EdgeInsets.only(bottom: 20),
+                                padding: const EdgeInsets.only(bottom: 25),
                                 child: _input('Name', _nameController)),
                             Padding(
-                                padding: const EdgeInsets.only(bottom: 20),
+                                padding: const EdgeInsets.only(bottom: 25),
                                 child: _input('Phone', _phoneController)),
                             Padding(
-                              padding: const EdgeInsets.only(bottom: 20),
+                              padding: const EdgeInsets.only(bottom: 25),
                               child: InputText(
                                 label: 'Email',
                                 textController: _emailController,
@@ -232,7 +232,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget _input(String hint, TextEditingController controller) {
     return TextFormField(
       textInputAction: TextInputAction.done,
-      validator: (input) => input == null ? 'Fill your $hint' : null,
+      validator: (input) => input == '' ? 'Fill your $hint' : null,
       controller: controller,
       keyboardType: hint == 'Phone' ? TextInputType.number : TextInputType.text,
       style: AppStyles.fillStyle,
@@ -275,7 +275,7 @@ class _RegisterPageState extends State<RegisterPage> {
       AuthServices authMethods = new AuthServices();
       authMethods
           .signUpWithEmailAndPassword(
-              _emailController.text, _passwordController.text)
+              _emailController.text.toLowerCase(), _passwordController.text)
           .then((value) {
         print(value.runtimeType);
         if (value is UserModel) {
