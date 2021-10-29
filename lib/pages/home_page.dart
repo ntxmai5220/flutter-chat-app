@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,7 +23,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   TextEditingController _searchController = new TextEditingController();
 
-  List<Review> mMessages = [];
+  List<Review> conversations = [];
 
   DatabaseServices databaseServices = new DatabaseServices();
 
@@ -157,28 +158,50 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildList() {
-    return FutureBuilder(
-        future: databaseServices.getMyRooms(email),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center();
-          } else if (snapshot.hasData) {
-            print('check list' + snapshot.data.toString());
-            mMessages = snapshot.data;
-            return ListView.builder(
-              itemCount: mMessages.length,
-              itemBuilder: (context, index) {
-                return _chatItem(context, index);
-              },
-            );
-          }
+    // return FutureBuilder(
+    //   future: databaseServices.getMyRooms(email),
+    //   builder: (BuildContext context, AsyncSnapshot snapshot) {
+    //     if (snapshot.connectionState == ConnectionState.waiting) {
+    //       return Center();
+    //     } else if (snapshot.hasData) {
+    //       print('check list' + snapshot.data.toString());
+    //       mMessages = snapshot.data;
+    //       return ListView.builder(
+    //         itemCount: mMessages.length,
+    //         itemBuilder: (context, index) {
+    //           return _chatItem(context, index);
+    //         },
+    //       );
+    //     }
 
-          return Center(child: CircularProgressIndicator());
-        });
+    //     return Center(child: CircularProgressIndicator());
+    //   },
+    // );
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+      stream: databaseServices.getAllConversations(email),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          conversations = List<Review>.from(
+              snapshot.data!.docs.map((x) => Review.fromMap(x.data(), x.id)));
+
+          conversations.sort((a, b) => b.last.compareTo(a.last));
+          return ListView.builder(
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) {
+              // Review review = Review.fromMap(
+              //     snapshot.data!.docs.elementAt(index).data(),
+              //     snapshot.data!.docs.elementAt(index).id);
+              return _chatItem(context, conversations[index]);
+            },
+          );
+        }
+        return Container();
+      },
+    );
   }
 
-  Widget _chatItem(BuildContext context, int index) {
-    Review room = mMessages[index];
+  Widget _chatItem(BuildContext context, Review review) {
+    Review room = review;
     int user = room.users[0] == email ? 1 : 0;
     return FutureBuilder(
         future: databaseServices.getUserInfor(room.users[user]),
@@ -213,8 +236,15 @@ class _HomePageState extends State<HomePage> {
                 subtitle: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(room.lastContent),
-                    Text(room.last.toDate().toString().substring(0, 16))
+                    Expanded(
+                        child: Text(
+                      room.lastContent,
+                      overflow: TextOverflow.ellipsis,
+                    )),
+                    Container(
+                        margin: EdgeInsets.only(left: 7),
+                        child: Text(
+                            room.last.toDate().toString().substring(0, 16)))
                   ],
                 ),
                 leading: CircleAvatar(
@@ -247,23 +277,24 @@ class _HomePageState extends State<HomePage> {
 
   void _searchDB(String value) {
     if (value.trim() != '') {
-      Iterable<Review> list = mMessages.where((element) =>
-          element.users
-              .where((element) =>
-                  element != me.email &&
-                  element.startsWith(value.toLowerCase()))
-              .toList()
+      Iterable<Review> list = conversations.where((review) =>
+          review.users
+              .where((user) =>
+                  user != me.email && user.startsWith(value.toLowerCase()))
               .length !=
           0);
-
-      // print('check len ${list.length}');
+      print('check len at home ${list.length}');
+      print('check len at home ${conversations.length}');
       // list.forEach((element) {
       //   print(element.users);
       // });
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (_) => SearchResultPage(text: value.trim(), searchMessages: list,)));
+              builder: (_) => SearchResultPage(
+                    text: value.trim(),
+                    searchMessages: list,
+                  )));
     }
   }
 }

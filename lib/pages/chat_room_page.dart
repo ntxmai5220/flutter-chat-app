@@ -74,9 +74,15 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: databaseServices.getStreamChat(this.docId),
       builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Container();
+        }
         if (!snapshot.hasData) {
           return Center(
-            child: CircularProgressIndicator(),
+            child: Text(
+              'Error!!',
+              style: AppStyles.hintStyle,
+            ),
           );
         }
 
@@ -88,45 +94,202 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
             itemBuilder: (context, index) {
               MessageModel message = MessageModel.fromMap(
                   snapshot.data!.docs.elementAt(index).data());
-              return Column(
-                crossAxisAlignment: message.fromUser == widget.friend.email
-                    ? CrossAxisAlignment.start
-                    : CrossAxisAlignment.end,
+
+              return Stack(
+                alignment: message.fromUser == widget.friend.email
+                    ? AlignmentDirectional.topStart
+                    : AlignmentDirectional.topEnd,
                 children: [
-                  Container(
-                    margin: message.fromUser == widget.friend.email
-                        ? EdgeInsets.fromLTRB(3, 2.5, size.width * 1 / 3, 2.5)
-                        : EdgeInsets.fromLTRB(size.width * 1 / 3, 2.5, 3, 2.5),
-                    padding: EdgeInsets.all(15),
-                    decoration: BoxDecoration(
-                        color: message.fromUser == widget.friend.email
-                            ? AppColors.primary
-                            : Colors.black12,
-                        borderRadius: message.fromUser == widget.friend.email
-                            ? BorderRadius.only(
-                                topRight: Radius.circular(15),
-                                bottomLeft: Radius.circular(15),
-                                bottomRight: Radius.circular(15))
-                            : BorderRadius.only(
-                                topLeft: Radius.circular(15),
-                                topRight: Radius.circular(15),
-                                bottomLeft: Radius.circular(15))),
-                    child: Text(
-                      message.content,
-                      //textAlign: index % 2 == 0 ? TextAlign.left : TextAlign.right,
-                      softWrap: true,
-                      style: AppStyles.fillStyle.copyWith(
-                          color: message.fromUser == widget.friend.email
-                              ? Colors.white
-                              : Colors.black),
-                    ),
+                  Column(
+                    crossAxisAlignment: message.fromUser == widget.friend.email
+                        ? CrossAxisAlignment.start
+                        : CrossAxisAlignment.end,
+                    children: [
+                      Container(
+                        margin: message.fromUser == widget.friend.email
+                            ? EdgeInsets.only(
+                                right: size.width / 3.0,
+                                bottom:
+                                    (message.reactions.length != 0 ? 10 : 0))
+                            : EdgeInsets.only(
+                                left: size.width / 3.0,
+                                bottom:
+                                    (message.reactions.length != 0 ? 10 : 0)),
+                        child: GestureDetector(
+                          onDoubleTap: () async {
+                            // setState(() {
+                            //   react = !react;
+                            // });
+                            if (!message.reactions.contains(widget.me.email)) {
+                              await FirebaseFirestore.instance
+                                  .collection('chat')
+                                  .doc(this.docId)
+                                  .collection('messages')
+                                  .doc(snapshot.data!.docs.elementAt(index).id)
+                                  .update({
+                                'reactions':
+                                    FieldValue.arrayUnion([widget.me.email])
+                              });
+                            } else {
+                              await FirebaseFirestore.instance
+                                  .collection('chat')
+                                  .doc(this.docId)
+                                  .collection('messages')
+                                  .doc(snapshot.data!.docs.elementAt(index).id)
+                                  .update({
+                                'reactions':
+                                    FieldValue.arrayRemove([widget.me.email])
+                              });
+                            }
+                          },
+                          child: Container(
+                            margin: message.fromUser == widget.friend.email
+                                ? EdgeInsets.fromLTRB(3, 2.5, 3, 2.5)
+                                : EdgeInsets.fromLTRB(3, 2.5, 3, 2.5),
+                            padding: EdgeInsets.all(15),
+                            decoration: BoxDecoration(
+                                color: message.fromUser == widget.friend.email
+                                    ? AppColors.primary
+                                    : Colors.black12,
+                                borderRadius:
+                                    message.fromUser == widget.friend.email
+                                        ? BorderRadius.only(
+                                            topRight: Radius.circular(15),
+                                            bottomLeft: Radius.circular(15),
+                                            bottomRight: Radius.circular(15))
+                                        : BorderRadius.only(
+                                            topLeft: Radius.circular(15),
+                                            topRight: Radius.circular(15),
+                                            bottomLeft: Radius.circular(15))),
+                            child: Text(
+                              message.content,
+                              //textAlign: index % 2 == 0 ? TextAlign.left : TextAlign.right,
+                              softWrap: true,
+                              style: AppStyles.fillStyle.copyWith(
+                                  color: message.fromUser == widget.friend.email
+                                      ? Colors.white
+                                      : Colors.black),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
+                  message.reactions.length != 0
+                      ? _buildReactions(message.reactions)
+                      : Container(
+                          width: 0,
+                        )
                 ],
               );
             },
           ),
         );
       },
+    );
+  }
+
+  _buildReactions(List<String> reactions) {
+    return Positioned(
+      bottom: 0,
+      child: InkWell(
+        onTap: () {
+          showModalBottomSheet(
+              backgroundColor: Colors.transparent,
+              context: context,
+              builder: (builder) {
+                return Container(
+                  margin: EdgeInsets.all(17),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15)),
+                  height: 250,
+                  child: Column(
+                    children: [
+                      Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Reactions',
+                              style: AppStyles.fillStyle,
+                            ),
+                            InkWell(
+                              child: Icon(Icons.close),
+                              borderRadius: BorderRadius.circular(50),
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                            )
+                          ],
+                        ),
+                      ),
+                      Divider(
+                        thickness: 1,
+                        height: 5,
+                        indent: 15,
+                        endIndent: 15,
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                            itemCount: reactions.length,
+                            itemBuilder: (context, index) {
+                              UserInfor user =
+                                  reactions[index] == widget.me.email
+                                      ? widget.me
+                                      : widget.friend;
+                              return ListTile(
+                                leading: CircleAvatar(
+                                  child: Text(
+                                      user.name.substring(0, 1).toUpperCase(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 24)),
+                                ),
+                                title: Text(
+                                  user.name,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 18),
+                                ),
+                                trailing: Icon(
+                                  Icons.favorite,
+                                  color: Colors.red,
+                                ),
+                              );
+                            }),
+                      )
+                    ],
+                  ),
+                );
+              });
+        },
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 3, horizontal: 3.5),
+          decoration: BoxDecoration(
+              color: Colors.orange.shade50.withOpacity(0.7),
+              borderRadius: BorderRadius.circular(10)),
+          child: Row(
+            children: [
+              Icon(
+                Icons.favorite,
+                size: 20,
+                color: Colors.red,
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 3),
+                child: Text(
+                  '${reactions.length}',
+                  textAlign: TextAlign.center,
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -187,7 +350,8 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
         fromUser: widget.me.email,
         sent: Timestamp.now(),
         type: MessageType.text,
-        content: value.trim());
+        content: value.trim(),
+        reactions: []);
     if (widget.docID == '_._') {
       List<String> users = [];
       users.addAll([widget.me.email, widget.friend.email]);

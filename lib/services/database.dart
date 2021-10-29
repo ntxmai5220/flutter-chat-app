@@ -64,14 +64,19 @@ class DatabaseServices {
         list.sort((a, b) => b.last.compareTo(a.last));
         return list;
       });
-  //ok
-  // Future<String> getDocId(String roomID) async => FirebaseFirestore.instance
-  //         .collection('chat')
-  //         .where('id', isEqualTo: roomID)
-  //         .get()
-  //         .then((value) {
-  //       return value.docs.first.id;
-  //     });
+  Stream<QuerySnapshot<Map<String, dynamic>>> getAllConversations(
+      String email) {
+    Query query = FirebaseFirestore.instance
+        .collection('chat')
+        .where('users', arrayContains: email);
+    return FirebaseFirestore.instance
+        .collection('chat')
+        //.orderBy('last')
+        .where('users', arrayContains: email)
+        //must be same field
+        .snapshots();
+  }
+
   //ok
   Stream<QuerySnapshot<Map<String, dynamic>>> getStreamChat(String doc) {
     return FirebaseFirestore.instance
@@ -95,20 +100,10 @@ class DatabaseServices {
           .collection('chat')
           .doc(doc)
           .update({'last': mess.sent, 'lastContent': mess.content});
+    } else {
+      FirebaseFirestore.instance.collection('chat').doc(doc).set(
+          {'last': mess.sent, 'lastContent': mess.content, 'users': users});
     }
-    else{
-      FirebaseFirestore.instance
-          .collection('chat')
-          .doc(doc)
-          .set({'last': mess.sent, 'lastContent': mess.content, 'users': users});
-    }
-  }
-
-  Future createChat(Review review) async {
-    FirebaseFirestore.instance
-        .collection('chat')
-        .add(review.toMap())
-        .then((value) {});
   }
 
   Future<List<UserInfor>> searchPeopleByEmail(String key) async =>
@@ -126,4 +121,8 @@ class DatabaseServices {
         });
         return list;
       });
+
+  Future updateReaction() async {
+
+  }
 }

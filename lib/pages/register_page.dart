@@ -31,7 +31,7 @@ class _RegisterPageState extends State<RegisterPage> {
   bool isProcessing = false;
   late bool visible;
   late String icPath;
-
+  String error = '';
   @override
   void initState() {
     super.initState();
@@ -42,6 +42,65 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+
+    void register() {
+      if (validation()) {
+        setState(() {
+          isProcessing = true;
+        });
+        AuthServices authMethods = new AuthServices();
+        authMethods
+            .signUpWithEmailAndPassword(
+                _emailController.text.toLowerCase(), _passwordController.text)
+            .then((value) {
+          print(value.runtimeType);
+          if (value is UserModel) {
+            DatabaseServices databaseServices = new DatabaseServices();
+            UserInfor newUser = new UserInfor(
+                email: _emailController.text,
+                name: _nameController.text,
+                avatar: '',
+                phone: _phoneController.text);
+            databaseServices.addUser(newUser.toMap());
+            ///////////////////////////
+            ///
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              margin: EdgeInsets.fromLTRB(20, 0, 20, size.height - 50),
+              backgroundColor: AppColors.primary.withOpacity(0.6),
+              behavior: SnackBarBehavior.floating,
+              duration: Duration(seconds: 1),
+              content: Text('Register successful'),
+            ));
+
+            //////////////////////////
+            Future.delayed(Duration(seconds: 1), () {
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (_) => LoginPage()),
+                  (route) => false);
+            });
+          } else {
+            String e = value.toString();
+            setState(() {
+              print('check        ' + e);
+              if (e.contains('email-already-in-use')) {
+                error = 'Email is already registered';
+              } else if (e.contains('weak-password')) {
+                error = 'Your password is weak. Please try again';
+              } else {
+                error = 'Register fail';
+              }
+            });
+          }
+        });
+
+        setState(() {
+          isProcessing = false;
+        });
+        print('sign up');
+      }
+    }
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       resizeToAvoidBottomInset: false,
@@ -62,9 +121,29 @@ class _RegisterPageState extends State<RegisterPage> {
             //mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                height: size.height / 9,
-                child: TitleText(text: 'Register'),
+              // Container(
+              //   height: size.height / 9,
+              //   child: TitleText(text: 'Register'),
+              // ),
+              Stack(
+                children: [
+                  Container(
+                    alignment: Alignment.bottomCenter,
+                    width: size.width,
+                    height: size.height / 9,
+                    child: Text(
+                      error,
+                      style:
+                          TextStyle(color: Colors.red.shade900, fontSize: 15),
+                    ),
+                  ),
+                  Container(
+                    alignment: Alignment.topCenter,
+                    width: size.width,
+                    height: size.height / 9,
+                    child: TitleText(text: 'Register'),
+                  ),
+                ],
               ),
               Container(
                 margin: EdgeInsets.symmetric(horizontal: 20),
@@ -232,7 +311,9 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget _input(String hint, TextEditingController controller) {
     return TextFormField(
       textInputAction: TextInputAction.done,
-      validator: (input) => input == '' ? 'Fill your $hint' : null,
+      validator: hint != 'Phone'
+          ? ((input) => input == '' ? 'Fill your $hint' : null)
+          : null,
       controller: controller,
       keyboardType: hint == 'Phone' ? TextInputType.number : TextInputType.text,
       style: AppStyles.fillStyle,
@@ -265,52 +346,6 @@ class _RegisterPageState extends State<RegisterPage> {
   void login() {
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (_) => LoginPage()));
-  }
-
-  void register() {
-    if (validation()) {
-      setState(() {
-        isProcessing = true;
-      });
-      AuthServices authMethods = new AuthServices();
-      authMethods
-          .signUpWithEmailAndPassword(
-              _emailController.text.toLowerCase(), _passwordController.text)
-          .then((value) {
-        print(value.runtimeType);
-        if (value is UserModel) {
-          DatabaseServices databaseServices = new DatabaseServices();
-          UserInfor newUser = new UserInfor(
-              email: _emailController.text,
-              name: _nameController.text,
-              avatar: '',
-              phone: _phoneController.text);
-          databaseServices.addUser(newUser.toMap());
-          ///////////////////////////
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('Register successful'),
-          ));
-
-          //////////////////////////
-          Future.delayed(Duration(seconds: 2), () {
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (_) => LoginPage()),
-                (route) => false);
-          });
-        } else {
-          String e = value.toString();
-          String error = e.substring(e.indexOf(']') + 1);
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(error),
-          ));
-        }
-      });
-      setState(() {
-        isProcessing = false;
-      });
-      print('sign up');
-    }
   }
 
   void back() {

@@ -75,13 +75,14 @@ class MessageModel {
   Timestamp sent;
   int type;
   String content;
-  //List<Reaction>? reactions;
+  List<String> reactions;
   MessageModel({
     //required this.sent,
     required this.fromUser,
     required this.sent,
     required this.type,
     required this.content,
+    required this.reactions
   });
 
   Map<String, dynamic> toMap() {
@@ -90,6 +91,7 @@ class MessageModel {
       'sent': sent,
       'type': type,
       'content': content,
+      'reactions': reactions,
     };
   }
 
@@ -99,6 +101,7 @@ class MessageModel {
       sent: map['sent'],
       type: map['type'],
       content: map['content'],
+      reactions: List<String>.from(map['reactions']),
     );
   }
 

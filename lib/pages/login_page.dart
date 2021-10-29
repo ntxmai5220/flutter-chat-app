@@ -27,6 +27,8 @@ class _LoginPageState extends State<LoginPage> {
 
   bool isProcessing = false;
   AuthServices authServices = new AuthServices();
+
+  String error = '';
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -37,9 +39,25 @@ class _LoginPageState extends State<LoginPage> {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                height: size.height / 9,
-                child: TitleText(text: 'Login'),
+              Stack(
+                children: [
+                  Container(
+                    alignment: Alignment.bottomCenter,
+                    width: size.width,
+                    height: size.height / 9,
+                    child: Text(
+                      error,
+                      style:
+                          TextStyle(color: Colors.red.shade900, fontSize: 15),
+                    ),
+                  ),
+                  Container(
+                    alignment: Alignment.topCenter,
+                    width: size.width,
+                    height: size.height / 9,
+                    child: TitleText(text: 'Login'),
+                  ),
+                ],
               ),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 20),
@@ -172,10 +190,20 @@ class _LoginPageState extends State<LoginPage> {
               MaterialPageRoute(builder: (_) => HomePage()), (route) => false);
         } else {
           String e = value.toString();
-          String error = e.substring(e.indexOf(']') + 1);
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(error),
-          ));
+          setState(() {
+            print('check        ' + e);
+            if (e.contains('wrong-password')) {
+              error = 'Email or password is incorrect';
+            } else if (e.contains('user-not-found')) {
+              error = 'The email is not registered';
+            } else {
+              error = 'Login fail';
+            }
+          });
+          // String error = e.substring(e.indexOf(']') + 1);
+          // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          //   content: Text(error),
+          // ));
         }
       });
       setState(() {

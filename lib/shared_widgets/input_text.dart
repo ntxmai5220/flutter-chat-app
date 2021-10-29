@@ -8,7 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 class InputText extends StatefulWidget {
   final String label;
   final bool pw;
-  final dynamic textController;
+  final TextEditingController textController;
   const InputText(
       {Key? key,
       required this.label,
@@ -68,19 +68,23 @@ class _InputTextState extends State<InputText> {
   }
 
   String? valid(String? input) {
-    // if (widget.pw) {
-    //   if (input!.length < 6) {
-    //     return 'At least 6 characters';
-    //     // } else if (int.tryParse(input) != null) {
-    //     //   return 'Password must be contain characters';
-    //   } else {
-    //     return null;
-    //   }
-    // }
-    if (!widget.pw && !input!.contains('@')) {
-      if (input.length == 0) {
-        return 'Email must be not empty';
+    if (input!.length == 0) {
+      return widget.label + ' can not be empty';
+    }
+    if (widget.pw) {
+      if (input.length < 6) {
+        return 'At least 6 characters';
+        // } else if (int.tryParse(input) != null) {
+        //   return 'Password must be contain characters';
+      } else {
+        return null;
       }
+    }
+    // RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(val) ?
+    //                       null : "Enter correct email";
+    //                 },
+    if (!widget.pw &&
+        !RegExp(r"^[a-zA-Z0-9._]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(input)) {
       return 'Invalid email';
     }
   }

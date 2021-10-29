@@ -95,13 +95,15 @@ class _SearchResultPageState extends State<SearchResultPage> {
 
   Widget _buildListMessages() {
     return Expanded(
+        flex: 5,
         child: ListView.builder(
-      itemCount: widget.searchMessages.length,
-      itemBuilder: (context, index) {
-        Review item = widget.searchMessages.elementAt(index);
-        return _chatItem(context, index);
-      },
-    ));
+          itemCount: widget.searchMessages.length,
+          itemBuilder: (context, index) {
+            //print('lennnnnnn ${widget.searchMessages.length}');
+            Review item = widget.searchMessages.elementAt(index);
+            return _chatItem(context, index);
+          },
+        ));
   }
 
   Widget _chatItem(BuildContext context, int index) {
@@ -212,6 +214,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
     // );
 
     return Expanded(
+      flex: 4,
       child: ListView.builder(
         itemCount: users.length,
         itemBuilder: (context, index) {
