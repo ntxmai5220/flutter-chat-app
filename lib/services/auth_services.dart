@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_app_chat/models/user_model.dart';
 
 class AuthServices {
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  //final FirebaseAuth _firebaseAuth = ;
 
   UserModel? _userFromFirebase(User? user) {
     return user != null ? UserModel(userId: user.uid) : null;
@@ -10,7 +10,7 @@ class AuthServices {
 
   Future signInWithEmailAndPassword(String email, String password) async {
     try {
-      UserCredential result = await _firebaseAuth.signInWithEmailAndPassword(
+      UserCredential result = await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: email, password: password);
       User? user = result.user;
       return _userFromFirebase(user);
@@ -22,7 +22,7 @@ class AuthServices {
 
   Future signUpWithEmailAndPassword(String email, String password) async {
     try {
-      UserCredential result = await _firebaseAuth
+      UserCredential result = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
       User? user = result.user;
       return _userFromFirebase(user);
@@ -33,6 +33,6 @@ class AuthServices {
   }
 
   Future signOut() async {
-    await _firebaseAuth.signOut();
+    await FirebaseAuth.instance.signOut();
   }
 }

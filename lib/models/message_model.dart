@@ -41,35 +41,6 @@ class Review {
   // factory Review.fromJson(String source) => Review.fromMap(json.decode(source));
 }
 
-class ChatRoom {
-  //MessageModel messages;
-  List<String> users;
-  Timestamp last;
-  ChatRoom({
-    required this.users,
-    required this.last,
-  });
-
-  Map<String, dynamic> toMap() {
-    return {
-      'users': users,
-      'last': last,
-    };
-  }
-
-  factory ChatRoom.fromMap(Map<String, dynamic> map) {
-    return ChatRoom(
-      users: List<String>.from(map['users']),
-      last: map['last'],
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory ChatRoom.fromJson(String source) =>
-      ChatRoom.fromMap(json.decode(source));
-}
-
 class MessageModel {
   String fromUser;
   Timestamp sent;
@@ -109,15 +80,6 @@ class MessageModel {
 
   factory MessageModel.fromJson(String source) =>
       MessageModel.fromMap(json.decode(source));
-}
-
-class Reaction {
-  String user;
-  int react;
-  Reaction({
-    required this.user,
-    required this.react,
-  });
 }
 
 class MessageType {

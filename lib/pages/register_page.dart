@@ -51,7 +51,8 @@ class _RegisterPageState extends State<RegisterPage> {
         AuthServices authMethods = new AuthServices();
         authMethods
             .signUpWithEmailAndPassword(
-                _emailController.text.toLowerCase(), _passwordController.text)
+                _emailController.text.toLowerCase().trim(),
+                _passwordController.text.trim())
             .then((value) {
           print(value.runtimeType);
           if (value is UserModel) {
@@ -101,174 +102,177 @@ class _RegisterPageState extends State<RegisterPage> {
       }
     }
 
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      resizeToAvoidBottomInset: false,
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        resizeToAvoidBottomInset: false,
 
-      // appBar: AppBar(
-      //   centerTitle: true,
-      //   leading: Padding(
-      //     padding: const EdgeInsets.symmetric(vertical: 2),
-      //     child: CustomBackButton(onTap: back),
-      //   ),
-      //   toolbarHeight: MediaQuery.of(context).size.height / 13.8,
-      //   backgroundColor: Colors.transparent,
-      //   elevation: 0,
-      // ),
-      body: Stack(
-        children: [
-          Column(
-            //mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Container(
-              //   height: size.height / 9,
-              //   child: TitleText(text: 'Register'),
-              // ),
-              Stack(
-                children: [
-                  Container(
-                    alignment: Alignment.bottomCenter,
-                    width: size.width,
-                    height: size.height / 9,
-                    child: Text(
-                      error,
-                      style:
-                          TextStyle(color: Colors.red.shade900, fontSize: 15),
-                    ),
-                  ),
-                  Container(
-                    alignment: Alignment.topCenter,
-                    width: size.width,
-                    height: size.height / 9,
-                    child: TitleText(text: 'Register'),
-                  ),
-                ],
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 20),
-                child: Stack(
+        // appBar: AppBar(
+        //   centerTitle: true,
+        //   leading: Padding(
+        //     padding: const EdgeInsets.symmetric(vertical: 2),
+        //     child: CustomBackButton(onTap: back),
+        //   ),
+        //   toolbarHeight: MediaQuery.of(context).size.height / 13.8,
+        //   backgroundColor: Colors.transparent,
+        //   elevation: 0,
+        // ),
+        body: Stack(
+          children: [
+            Column(
+              //mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Container(
+                //   height: size.height / 9,
+                //   child: TitleText(text: 'Register'),
+                // ),
+                Stack(
                   children: [
-                    Positioned(
-                      top: 20,
-                      bottom: 25,
-                      width: size.width - 40,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(15),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.4),
-                              spreadRadius: 3,
-                              blurRadius: 7,
-                              offset:
-                                  Offset(1, 1), // changes position of shadow
-                            ),
-                          ],
-                        ),
+                    Container(
+                      alignment: Alignment.bottomCenter,
+                      width: size.width,
+                      height: size.height / 9,
+                      child: Text(
+                        error,
+                        style:
+                            TextStyle(color: Colors.red.shade900, fontSize: 15),
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.fromLTRB(27, 47, 27, 0),
-                      child: Form(
-                        key: globalKey,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Padding(
-                                padding: const EdgeInsets.only(bottom: 25),
-                                child: _input('Name', _nameController)),
-                            Padding(
-                                padding: const EdgeInsets.only(bottom: 25),
-                                child: _input('Phone', _phoneController)),
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 25),
-                              child: InputText(
-                                label: 'Email',
-                                textController: _emailController,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 20),
-                              child: InputText(
-                                label: 'Password',
-                                textController: _passwordController,
-                                pw: true,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 20),
-                              child: confirmPw('Confirm password'),
-                            ),
-                            CustomButton(label: 'Register', onClick: register)
-                          ],
-                        ),
-                      ),
-                    )
+                      alignment: Alignment.topCenter,
+                      width: size.width,
+                      height: size.height / 9,
+                      child: TitleText(text: 'Register'),
+                    ),
                   ],
                 ),
-              ),
-              Container(
-                height: size.height / 5.5,
-                alignment: Alignment.center,
-                child: RichText(
-                  text: TextSpan(
-                    text: 'Already have an account? ',
-                    style: AppStyles.hintStyle.copyWith(fontSize: 16),
-                    children: <TextSpan>[
-                      TextSpan(
-                        text: 'Login',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.primary,
-                            fontSize: 18),
-                        recognizer: TapGestureRecognizer()..onTap = login,
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        top: 20,
+                        bottom: 25,
+                        width: size.width - 40,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(15),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.4),
+                                spreadRadius: 3,
+                                blurRadius: 7,
+                                offset:
+                                    Offset(1, 1), // changes position of shadow
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                      TextSpan(text: ' now!'),
+                      Container(
+                        padding: EdgeInsets.fromLTRB(27, 47, 27, 0),
+                        child: Form(
+                          key: globalKey,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Padding(
+                                  padding: const EdgeInsets.only(bottom: 25),
+                                  child: _input('Name', _nameController)),
+                              Padding(
+                                  padding: const EdgeInsets.only(bottom: 25),
+                                  child: _input('Phone', _phoneController)),
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 25),
+                                child: InputText(
+                                  label: 'Email',
+                                  textController: _emailController,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 20),
+                                child: InputText(
+                                  label: 'Password',
+                                  textController: _passwordController,
+                                  pw: true,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 20),
+                                child: confirmPw('Confirm password'),
+                              ),
+                              CustomButton(label: 'Register', onClick: register)
+                            ],
+                          ),
+                        ),
+                      )
                     ],
                   ),
                 ),
-              )
-            ],
-          ),
-          !isProcessing
-              ? Container()
-              : Stack(
-                  children: [
-                    Container(
-                      height: size.height,
-                      width: size.width,
-                      color: Colors.grey.withOpacity(0.4),
-                    ),
-                    Positioned(
-                      top: size.height / 2 - size.width / 4.4,
-                      left: size.width / 2 - size.width / 3,
-                      child: Container(
-                        height: size.width / 2.2,
-                        width: size.width / 1.5,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(15),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.4),
-                              spreadRadius: 3,
-                              blurRadius: 7,
-                              offset:
-                                  Offset(1, 1), // changes position of shadow
-                            ),
-                          ],
+                Container(
+                  height: size.height / 5.5,
+                  alignment: Alignment.center,
+                  child: RichText(
+                    text: TextSpan(
+                      text: 'Already have an account? ',
+                      style: AppStyles.hintStyle.copyWith(fontSize: 16),
+                      children: <TextSpan>[
+                        TextSpan(
+                          text: 'Login',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.primary,
+                              fontSize: 18),
+                          recognizer: TapGestureRecognizer()..onTap = login,
                         ),
-                        child: Center(
-                          child: CircularProgressIndicator(),
+                        TextSpan(text: ' now!'),
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
+            !isProcessing
+                ? Container()
+                : Stack(
+                    children: [
+                      Container(
+                        height: size.height,
+                        width: size.width,
+                        color: Colors.grey.withOpacity(0.4),
+                      ),
+                      Positioned(
+                        top: size.height / 2 - size.width / 4.4,
+                        left: size.width / 2 - size.width / 3,
+                        child: Container(
+                          height: size.width / 2.2,
+                          width: size.width / 1.5,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(15),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.4),
+                                spreadRadius: 3,
+                                blurRadius: 7,
+                                offset:
+                                    Offset(1, 1), // changes position of shadow
+                              ),
+                            ],
+                          ),
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-        ],
+                    ],
+                  ),
+          ],
+        ),
       ),
     );
   }
@@ -361,5 +365,16 @@ class _RegisterPageState extends State<RegisterPage> {
       return true;
     }
     return false;
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPwController.dispose();
+    _nameController.dispose();
+    _phoneController.dispose();
+    super.dispose();
   }
 }

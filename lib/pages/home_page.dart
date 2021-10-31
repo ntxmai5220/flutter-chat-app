@@ -10,8 +10,6 @@ import 'package:flutter_app_chat/pages/chat_room_page.dart';
 import 'package:flutter_app_chat/pages/profile_page.dart';
 import 'package:flutter_app_chat/services/database.dart';
 import 'package:flutter_app_chat/pages/search_result_page.dart';
-import 'package:flutter_app_chat/values/app_colors.dart';
-import 'package:flutter_app_chat/values/app_styles.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -37,8 +35,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     // TODO: implement initState
-    super.initState();
     getMyInfor();
+    super.initState();
   }
 
   @override
@@ -94,7 +92,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _searchBar(Size size) {
-    var findMeaage;
     return Container(
       padding: EdgeInsets.symmetric(vertical: 12),
       alignment: Alignment.centerLeft,
@@ -106,7 +103,7 @@ class _HomePageState extends State<HomePage> {
           textInputAction: TextInputAction.search,
           onSubmitted: _searchDB,
           decoration: InputDecoration(
-            hintText: 'Search',
+            hintText: 'Search (email starts with)',
             prefixIcon: Icon(Icons.search),
             //suffixIcon: onChange ? Icon(Icons.cancel) : Container(),
             border: OutlineInputBorder(
@@ -264,13 +261,6 @@ class _HomePageState extends State<HomePage> {
         context, MaterialPageRoute(builder: (_) => ProfilePage(infor: me)));
   }
 
-  void _searchMessage(String text) {
-    // setState(() {
-    //   onChange = !onChange;
-    // });
-    print(text);
-  }
-
   void goToChatDetail() {
     //Navigator.push(context, MaterialPageRoute(builder: (_) => ChatRoomPage()));
   }
@@ -296,5 +286,12 @@ class _HomePageState extends State<HomePage> {
                     searchMessages: list,
                   )));
     }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _searchController.dispose();
+    super.dispose();
   }
 }

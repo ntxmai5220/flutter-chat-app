@@ -46,33 +46,30 @@ class _SearchResultPageState extends State<SearchResultPage> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    return GestureDetector(
-      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: Scaffold(
-        appBar: _appBar(),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
-              child: Text(
-                users.length != 0 ? 'People' : '',
-                style: AppStyles.hintStyle.copyWith(fontSize: 20),
-              ),
+    //Size size = MediaQuery.of(context).size;
+    return Scaffold(
+      appBar: _appBar(),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
+            child: Text(
+              users.length != 0 ? 'People' : '',
+              style: AppStyles.hintStyle.copyWith(fontSize: 20),
             ),
-            _buildListPeople(),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
-              child: Text(
-                widget.searchMessages.length != 0 ? 'Messages' : '',
-                style: AppStyles.hintStyle.copyWith(fontSize: 20),
-              ),
+          ),
+          _buildListPeople(),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
+            child: Text(
+              widget.searchMessages.length != 0 ? 'Messages' : '',
+              style: AppStyles.hintStyle.copyWith(fontSize: 20),
             ),
-            _buildListMessages(),
-          ],
-        ),
+          ),
+          _buildListMessages(),
+        ],
       ),
     );
   }
@@ -100,7 +97,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
           itemCount: widget.searchMessages.length,
           itemBuilder: (context, index) {
             //print('lennnnnnn ${widget.searchMessages.length}');
-            Review item = widget.searchMessages.elementAt(index);
+            //Review item = widget.searchMessages.elementAt(index);
             return _chatItem(context, index);
           },
         ));
@@ -135,7 +132,11 @@ class _SearchResultPageState extends State<SearchResultPage> {
               subtitle: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('abc'),
+                  Expanded(
+                      child: Text(
+                    room.lastContent,
+                    overflow: TextOverflow.ellipsis,
+                  )),
                   Text(room.last.toDate().toString().substring(0, 16))
                 ],
               ),

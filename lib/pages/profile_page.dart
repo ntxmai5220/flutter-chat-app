@@ -4,8 +4,6 @@ import 'package:flutter_app_chat/pages/login_page.dart';
 import 'package:flutter_app_chat/services/auth_services.dart';
 import 'package:flutter_app_chat/services/database.dart';
 import 'package:flutter_app_chat/shared_widgets/back_button.dart';
-import 'package:flutter_app_chat/shared_widgets/custom_button.dart';
-import 'package:flutter_app_chat/shared_widgets/title_text.dart';
 import 'package:flutter_app_chat/values/app_colors.dart';
 import 'package:flutter_app_chat/values/app_styles.dart';
 
@@ -42,31 +40,34 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      resizeToAvoidBottomInset: false,
-      appBar: _profileBar(),
-      body: Column(
-        children: [
-          Container(
-            height: size.height / 3,
-            child: Stack(
-              children: [
-                Positioned(
-                  bottom: 50,
-                  width: size.width,
-                  height: size.height / 3 - 50,
-                  child: Container(
-                    color: Colors.blue.withOpacity(0.2),
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        resizeToAvoidBottomInset: false,
+        appBar: _profileBar(),
+        body: Column(
+          children: [
+            Container(
+              height: size.height / 3,
+              child: Stack(
+                children: [
+                  Positioned(
+                    bottom: 50,
+                    width: size.width,
+                    height: size.height / 3 - 50,
+                    child: Container(
+                      color: Colors.blue.withOpacity(0.2),
+                    ),
                   ),
-                ),
-                _avatar(size),
-                _editInfor(),
-              ],
+                  _avatar(size),
+                  _editInfor(),
+                ],
+              ),
             ),
-          ),
-          _detailInfor(size),
-        ],
+            _detailInfor(size),
+          ],
+        ),
       ),
     );
   }
@@ -260,10 +261,8 @@ class _ProfilePageState extends State<ProfilePage> {
         onTap: _changeAvt,
         borderRadius: BorderRadius.circular(50),
         child: CircleAvatar(
-          child: Icon(
-            Icons.face,
-            size: 50,
-          ),
+          child: Text(widget.infor.name.substring(0, 1).toUpperCase(),
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 40)),
         ),
       ),
     );
