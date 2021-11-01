@@ -38,6 +38,7 @@ dependencies:
   video_player: ^2.2.3
   path_provider: ^2.0.4
   advance_pdf_viewer: ^2.0.0
+  shared_preferences: ^2.0.7
 
 dev_dependencies:
   flutter_test:

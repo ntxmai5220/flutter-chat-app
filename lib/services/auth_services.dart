@@ -4,16 +4,16 @@ import 'package:flutter_app_chat/models/user_model.dart';
 class AuthServices {
   //final FirebaseAuth _firebaseAuth = ;
 
-  UserModel? _userFromFirebase(User? user) {
-    return user != null ? UserModel(userId: user.uid) : null;
+  UserModel? _userFromFirebase(User? user, String pw) {
+    return user != null ? UserModel(email: user.email!, pw: pw) : null;
   }
 
   Future signInWithEmailAndPassword(String email, String password) async {
     try {
-      UserCredential result = await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: email, password: password);
+      UserCredential result = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
       User? user = result.user;
-      return _userFromFirebase(user);
+      return _userFromFirebase(user, password);
     } catch (e) {
       print(e.toString());
       return e;
@@ -25,7 +25,7 @@ class AuthServices {
       UserCredential result = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
       User? user = result.user;
-      return _userFromFirebase(user);
+      return _userFromFirebase(user, '');
     } catch (e) {
       print(e.toString());
       return e;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app_chat/helper/sharedpreferences.dart';
 import 'package:flutter_app_chat/models/user_model.dart';
 import 'package:flutter_app_chat/pages/login_page.dart';
 import 'package:flutter_app_chat/services/auth_services.dart';
@@ -275,6 +276,10 @@ class _ProfilePageState extends State<ProfilePage> {
   void logOut() {
     AuthServices authServices = new AuthServices();
     authServices.signOut();
+    HelperSharedPreferences helperSharedPreferences =
+        new HelperSharedPreferences();
+    helperSharedPreferences.saveUserLogin(false);
+    helperSharedPreferences.saveUserAccount('', '');
     Navigator.pushAndRemoveUntil(context,
         MaterialPageRoute(builder: (_) => LoginPage()), (route) => false);
   }

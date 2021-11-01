@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app_chat/helper/sharedpreferences.dart';
 import 'package:flutter_app_chat/models/user_model.dart';
 import 'package:flutter_app_chat/services/auth_services.dart';
 import 'package:flutter_app_chat/shared_widgets/custom_button.dart';
@@ -303,6 +304,10 @@ class _LoginPageState extends State<LoginPage> {
           .then((value) {
         print(value is UserModel);
         if (value is UserModel) {
+          HelperSharedPreferences helperSharedPreferences =
+              new HelperSharedPreferences();
+          helperSharedPreferences.saveUserLogin(true);
+          helperSharedPreferences.saveUserAccount(value.email, value.pw);
           Navigator.pushAndRemoveUntil(context,
               MaterialPageRoute(builder: (_) => HomePage()), (route) => false);
         } else {
