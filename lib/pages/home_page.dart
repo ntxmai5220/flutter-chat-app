@@ -21,7 +21,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   TextEditingController _searchController = new TextEditingController();
 
-  List<Review> conversations = [];
+  List<Conversation> conversations = [];
 
   DatabaseServices databaseServices = new DatabaseServices();
 
@@ -178,14 +178,14 @@ class _HomePageState extends State<HomePage> {
       stream: databaseServices.getAllConversations(email),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          conversations = List<Review>.from(
-              snapshot.data!.docs.map((x) => Review.fromMap(x.data(), x.id)));
+          conversations = List<Conversation>.from(
+              snapshot.data!.docs.map((x) => Conversation.fromMap(x.data(), x.id)));
 
           conversations.sort((a, b) => b.last.compareTo(a.last));
           return ListView.builder(
             itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, index) {
-              // Review review = Review.fromMap(
+              // Conversation review = Conversation.fromMap(
               //     snapshot.data!.docs.elementAt(index).data(),
               //     snapshot.data!.docs.elementAt(index).id);
               return _chatItem(context, conversations[index]);
@@ -197,8 +197,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _chatItem(BuildContext context, Review review) {
-    Review room = review;
+  Widget _chatItem(BuildContext context, Conversation review) {
+    Conversation room = review;
     int user = room.users[0] == email ? 1 : 0;
     return FutureBuilder(
         future: databaseServices.getUserInfor(room.users[user]),
@@ -267,7 +267,7 @@ class _HomePageState extends State<HomePage> {
 
   void _searchDB(String value) {
     if (value.trim() != '') {
-      Iterable<Review> list = conversations.where((review) =>
+      Iterable<Conversation> list = conversations.where((review) =>
           review.users
               .where((user) =>
                   user != me.email && user.startsWith(value.toLowerCase()))

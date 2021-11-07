@@ -9,7 +9,7 @@ import 'package:flutter_app_chat/values/app_styles.dart';
 
 class SearchResultPage extends StatefulWidget {
   final String text;
-  final Iterable<Review> searchMessages;
+  final Iterable<Conversation> searchMessages;
   const SearchResultPage(
       {Key? key, required this.text, required this.searchMessages})
       : super(key: key);
@@ -97,14 +97,14 @@ class _SearchResultPageState extends State<SearchResultPage> {
           itemCount: widget.searchMessages.length,
           itemBuilder: (context, index) {
             //print('lennnnnnn ${widget.searchMessages.length}');
-            //Review item = widget.searchMessages.elementAt(index);
+            //Conversation item = widget.searchMessages.elementAt(index);
             return _chatItem(context, index);
           },
         ));
   }
 
   Widget _chatItem(BuildContext context, int index) {
-    Review room = widget.searchMessages.elementAt(index);
+    Conversation room = widget.searchMessages.elementAt(index);
     int user = room.users[0] == email ? 1 : 0;
     return FutureBuilder(
         future: databaseServices.getUserInfor(room.users[user]),

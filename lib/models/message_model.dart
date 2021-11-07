@@ -1,14 +1,13 @@
 import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Review {
+class Conversation {
   //MessageModel messages;
   String docId;
   List<String> users;
   Timestamp last;
   String lastContent;
-  Review({
+  Conversation({
     //required this.messages,
     required this.docId,
     required this.users,
@@ -25,8 +24,8 @@ class Review {
     };
   }
 
-  factory Review.fromMap(Map<String, dynamic> map, String docId) {
-    return Review(
+  factory Conversation.fromMap(Map<String, dynamic> map, String docId) {
+    return Conversation(
       // messages: List<MessageModel>.from(
       //     map['chatting']?.map((x) => MessageModel.fromMap(x))).first,
       docId: docId,
@@ -38,7 +37,7 @@ class Review {
 
   String toJson() => json.encode(toMap());
 
-  // factory Review.fromJson(String source) => Review.fromMap(json.decode(source));
+  // factory Conversation.fromJson(String source) => Conversation.fromMap(json.decode(source));
 }
 
 class MessageModel {
