@@ -46,13 +46,13 @@ class DatabaseServices {
     });
   }
 
-  Future<List<Review>> getMyRooms(String email) async =>
+  Future<List<Conversation>> getMyRooms(String email) async =>
       FirebaseFirestore.instance
           .collection('chat')
           .where('users', arrayContains: email)
           .get()
           .then((value) {
-        List<Review> list = [];
+        List<Conversation> list = [];
         // value.docs.forEach((element) {
         //   result.
         // });
@@ -60,7 +60,7 @@ class DatabaseServices {
           //MessageModel mess;
           //print('check db  ${element.data()}');
 
-          list.add(Review.fromMap(element.data(), element.id));
+          list.add(Conversation.fromMap(element.data(), element.id));
         });
         list.sort((a, b) => b.last.compareTo(a.last));
         return list;
